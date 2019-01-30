@@ -1,11 +1,61 @@
-import React from 'react';
-import { StyleSheet, Text, View } from 'react-native';
+import { React, Component } from 'react';
+import {
+  StyleSheet,
+  Text,
+  View,
+  FlatList,
+  TouchableHighlight,
+} from 'react-native';
+
+const decklist = [
+  {
+    key: '1',
+    title: 'Deck 1',
+    itemsCount: 3,
+  },
+  {
+    key: '2',
+    title: 'Deck 2',
+    itemsCount: 0,
+  },
+]
+
+class DeckItem extends Component {
+  onPress = (ev) => {
+
+  }
+
+  render() {
+    return (
+      <TouchableHighlight onPress={this.onPress}>
+        <View>
+          <Text>{this.props.title}</Text>
+          <Text>{this.props.itemsCount}</Text>
+        </View>
+      </TouchableHighlight>
+    )
+  }
+}
+
+class DeckList extends Component {
+  render() {
+    return (
+      <FlatList
+        data={decklist}
+        renderItem={
+          ({item}) => <DeckItem title={item.title} itemsCount={item.itemsCount} />
+        }
+      />
+    )
+  }
+}
 
 export default class App extends React.Component {
   render() {
     return (
-      <View style={styles.container}>
+      <View>
         <Text>Open up App.js to start working on your app!</Text>
+        <DeckList />
       </View>
     );
   }
