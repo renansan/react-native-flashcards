@@ -5,7 +5,16 @@ import {
   View,
   FlatList,
   TouchableHighlight,
+  StatusBar,
 } from 'react-native';
+import {
+  createBottomTabNavigator,
+  createStackNavigator,
+  createAppContainer,
+  createDrawerNavigator,
+  SafeAreaView,
+} from 'react-navigation';
+// https://reactnavigation.org/docs/en/navigation-options-resolution.html
 
 const decklist = [
   {
@@ -22,7 +31,7 @@ const decklist = [
 
 class DeckItem extends Component {
   onPress = (ev) => {
-
+    this.props.navigation.navigate('Profile');
   }
 
   render() {
@@ -38,28 +47,80 @@ class DeckItem extends Component {
 }
 
 class DeckList extends Component {
+
   render() {
     return (
       <FlatList
         data={decklist}
-        renderItem={
-          ({item}) => <DeckItem title={item.title} itemsCount={item.itemsCount} />
-        }
+        renderItem={({item}) => <DeckItem title={item.title} itemsCount={item.itemsCount} navigation={this.props.navigation} />}
       />
     )
   }
 }
 
-class App extends Component {
+class HomeScreen extends Component {
+  static navigationOptions = {
+    title: 'Home',
+  };
+
   render() {
     return (
-      <View>
-        <Text>Open up App.js to start working on your app!</Text>
-        <DeckList />
-      </View>
+      <SafeAreaView>
+        <StatusBar
+          barStyle="light-content"
+          backgroundColor="orange"
+        />
+        <DeckList navigation={this.props.navigation} />
+      </SafeAreaView>
     );
   }
 }
+
+class ProfileScreen extends Component {
+  static navigationOptions = {
+    title: 'Profile',
+  };
+
+  render() {
+    return (
+      <SafeAreaView>
+        <StatusBar
+          barStyle="light-content"
+          backgroundColor="orange"
+        />
+        <View>
+          <Text>Profile</Text>
+        </View>
+      </SafeAreaView>
+    );
+  }
+}
+
+const MainNavigator = createDrawerNavigator(
+  {
+    Home: {screen: HomeScreen},
+    Profile: {screen: ProfileScreen},
+  },
+  {
+    initialRouteName: "Home",
+    defaultNavigationOptions: {
+      headerStyle: {
+        backgroundColor: '#f4511e',
+      },
+      headerTintColor: '#fff',
+      headerTitleStyle: {
+        fontWeight: 'bold',
+      },
+    },
+  }
+);
+
+const HeaderNavigator = createStackNavigator({
+  Home: {screen: HomeScreen},
+  Profile: {screen: ProfileScreen},
+});
+
+const App = createAppContainer(HeaderNavigator);
 
 const styles = StyleSheet.create({
   container: {
