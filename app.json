@@ -3,7 +3,7 @@
     "name": "Flashcards",
     "slug": "flashcards",
     "privacy": "public",
-    "sdkVersion": "32.0.0",
+    "sdkVersion": "30.0.0",
     "platforms": [
       "ios",
       "android"
