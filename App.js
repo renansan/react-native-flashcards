@@ -1,4 +1,4 @@
-import { React, Component } from 'react';
+import React, { Component } from 'react';
 import {
   StyleSheet,
   Text,
@@ -50,7 +50,7 @@ class DeckList extends Component {
   }
 }
 
-export default class App extends React.Component {
+class App extends Component {
   render() {
     return (
       <View>
@@ -69,3 +69,5 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
 });
+
+export default App;
