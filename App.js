@@ -96,10 +96,22 @@ class ProfileScreen extends Component {
   }
 }
 
-const MainNavigator = createDrawerNavigator(
+const BottomNavigator = createBottomTabNavigator(
   {
     Home: {screen: HomeScreen},
     Profile: {screen: ProfileScreen},
+  }
+);
+
+const HeaderNavigator = createStackNavigator({
+  Home: {screen: HomeScreen},
+  Profile: {screen: ProfileScreen},
+});
+
+const MainNavigator = createDrawerNavigator(
+  {
+    Home: {screen: HeaderNavigator},
+    Profile: {screen: BottomNavigator},
   },
   {
     initialRouteName: "Home",
@@ -115,12 +127,7 @@ const MainNavigator = createDrawerNavigator(
   }
 );
 
-const HeaderNavigator = createStackNavigator({
-  Home: {screen: HomeScreen},
-  Profile: {screen: ProfileScreen},
-});
-
-const App = createAppContainer(HeaderNavigator);
+const App = createAppContainer(MainNavigator);
 
 const styles = StyleSheet.create({
   container: {
