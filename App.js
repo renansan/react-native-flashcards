@@ -169,36 +169,66 @@ class Deck extends Component {
 }
 
 class Quiz extends Component {
+  state = {
+    hits: 0,
+    cardActiveIndex: 0,
+    isShowingQuestion: true,
+    isResult: false,
+  }
 
-  showAnswer = (ev) => {}
+  userAnswer = (isAnswerCorrect) => {
+    this.setState(prevState => {
+      const isResult = (this.props.cards.length === (prevState.cardActiveIndex + 1)) ? true : false;
+      // debugger;
+      return {
+        ...prevState,
+        hits: prevState.hits + isAnswerCorrect,
+        cardActiveIndex: prevState.cardActiveIndex + 1,
+        isResult,
+      }
+    })
+  }
 
-  showQuestion = (ev) => {}
-
-  toggleQA = (ev) => {}
-
-  markAsCorrect = (ev) => {}
-
-  markAsIncorrect = (ev) => {}
+  toggleQA = (ev) => {
+    this.setState(prevState => {
+      return {
+        ...prevState,
+        isShowingQuestion: !prevState.isShowingQuestion,
+      }
+    })
+  }
 
   render() {
+    const { cardActiveIndex, hits, isShowingQuestion, isResult } = this.state;
+    const { id, cards } = this.props;
+    const currentQuestion = cards[cardActiveIndex];
+    const title = currentQuestion ? ((isShowingQuestion) ? currentQuestion.question : currentQuestion.answer) : '';
+
     return (
       <View>
-        <View>
-          <Text>2/2</Text>
-        </View>
-        <View>
-          <Text>Question/Answer Title</Text>
-          <TouchableHighlight onPress={this.showAnswer}>
-            <Text>Show Answer</Text>
-          </TouchableHighlight>
-          <TouchableHighlight onPress={this.showQuestion}>
-            <Text>Show Question</Text>
-          </TouchableHighlight>
-        </View>
-        <View>
-          <Button title={'Correct'} onPress={this.markAsCorrect} />
-          <Button title={'Incorrect'} onPress={this.markAsIncorrect} />
-        </View>
+        {isResult ? (
+          <View>
+            <Text>
+              Score: {`${hits} correct answers of ${cards.length}.`}
+            </Text>
+          </View>
+        ) : (
+          <View>
+            <View>
+              <Text>{`${cardActiveIndex + 1}/${cards.length}`}</Text>
+            </View>
+            <View>
+              <Text>{title}</Text>
+              <TouchableHighlight onPress={this.toggleQA}>
+                <Text>Show {isShowingQuestion ? 'answer' : 'question'}</Text>
+              </TouchableHighlight>
+            </View>
+            <View>
+              <Button title={'Correct'} onPress={ev => this.userAnswer(1)} />
+              <Button title={'Incorrect'} onPress={ev => this.userAnswer(0)} />
+            </View>
+          </View>
+        )}
       </View>
     )
   }
@@ -300,9 +330,12 @@ class QuizView extends Component {
   };
 
   render() {
+    const id = this.props.navigation.getParam('deckId');
+    const deck = decklist.filter(item => id === item.id)[0];
+
     return (
       <View>
-        <Quiz navigation={this.props.navigation} />
+        <Quiz id={id} cards={deck.cards} navigation={this.props.navigation} />
       </View>
     );
   }
