@@ -1,10 +1,14 @@
 import React, { Component } from 'react';
 import { AsyncStorage, StyleSheet, Text, View, FlatList, Button, TouchableHighlight, StatusBar, TextInput } from 'react-native';
 import { createBottomTabNavigator, createStackNavigator, createAppContainer, createDrawerNavigator } from 'react-navigation';
+import Reactotron from 'reactotron-react-native';
+
+const cons = Reactotron || console;
 
 /**
  * Database
  */
+const DECK_LIST = 'DECK_LIST';
 const decklist = [
   {
     key: '1',
@@ -34,7 +38,7 @@ const decklist = [
     cards: [],
   },
 ]
-const storeData = async (key, value) => {
+const storeData = async (key, value, cb) => {
   try {
     await AsyncStorage.mergeItem(key, value);
   } catch (error) {
@@ -42,7 +46,7 @@ const storeData = async (key, value) => {
     console.log(error.message);
   }
 }
-const fetchData = async (key) => {
+const fetchData = async (key, cb) => {
   let data = null;
   try {
     data = await AsyncStorage.getItem(key) || null;
@@ -78,7 +82,8 @@ class DeckItem extends Component {
 
 class DeckList extends Component {
   state = {
-    decklist: {}
+    decklist: {},
+    logStatus: 'beforeDidMount',
   }
 
   renderDeckItem = (item) => {
@@ -88,36 +93,28 @@ class DeckList extends Component {
   }
 
   componentDidMount () {
-    this.setState({ decklist: this.props.decklist });
-
-    // AsyncStorage not working
-    // const test = fetchData('DECK_LIST');
-    // // debugger;
-    // AsyncStorage.setItem('DECK_LIST', JSON.stringify(decklist), error => {
-    //   debugger;
-    // });
-    // AsyncStorage.getItem('DECK_LIST', () => {
-    //   debugger;
-    // }).then(data => {
-    //   console.log(data);
-    //   debugger;
-    // });
-    // AsyncStorage.getAllKeys('DECK_LIST').then(data => {
-    //   console.log(data);
-    //   debugger;
-    // });
-
-    // this.setState({ decklist: AsyncStorage.getItem('DECK_LIST') });
-    // AsyncStorage.setItem('DECK_LIST', decklist);
-
+    // https://facebook.github.io/react-native/docs/asyncstorage#mergeitem
+    AsyncStorage.getItem(DECK_LIST).then(data => {
+      if (data) {
+        this.setState({ decklist: JSON.parse(data) });
+      } else {
+        AsyncStorage.setItem(DECK_LIST, JSON.stringify(decklist)).then(data => {
+          this.setState({ decklist: JSON.parse(data) });
+        });
+      }
+    });
   }
 
   render() {
     return (
-      <FlatList
-        data={this.state.decklist}
-        renderItem={({item}) => this.renderDeckItem(item)}
-      />
+      <View>
+        <Text>{JSON.stringify(this.state.logStatus)}</Text>
+        <Text>{JSON.stringify(this.state.decklist)}</Text>
+        <FlatList
+          data={this.state.decklist}
+          renderItem={({item}) => this.renderDeckItem(item)}
+        />
+      </View>
     )
   }
 }
@@ -235,17 +232,45 @@ class Quiz extends Component {
 }
 
 class AddDeck extends Component {
+  state = {
+    title: '',
+    logStatus: 'beforeSubmit',
+  }
 
-  onPress = (ev) => {}
+  onPress = (ev) => {
+    AsyncStorage.getItem(DECK_LIST).then(data => {
+      if (data) {
+        const prevData = JSON.parse(data);
+        const key = prevData.length + 1;
+        const { title} = this.state;
+        const newDeck = {
+          key,
+          id: `deck-${key}`,
+          title,
+          cardsCount: 0,
+          cards: [],
+        }
+        debugger;
+        AsyncStorage.mergeItem(DECK_LIST, JSON.stringify([...newDeck])).then(data => {
+          this.setState({ decklist: JSON.parse(data), logStatus: 'merging' + data });
+        });
+      } else {
+        AsyncStorage.setItem(DECK_LIST, JSON.stringify([newDeck])).then(data => {
+          this.setState({ decklist: JSON.parse(data), logStatus: 'setting' + data });
+        });
+      }
+    });
+  }
 
   render() {
     return (
       <View>
+        <Text>{this.state.logStatus}</Text>
         <Text>Type the title of the new deck</Text>
         <TextInput
            style={{height: 40, borderColor: 'gray', borderWidth: 1}}
-           onChangeText={(text) => 'this.setState({text})'}
-           value={'this.state.text'}
+           onChangeText={(title) => this.setState({title})}
+           value={this.state.title}
          />
        <Button title="Submit" onPress={this.onPress} />
       </View>
