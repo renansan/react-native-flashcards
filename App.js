@@ -70,6 +70,19 @@ class DeckItem extends Component {
 }
 
 class DeckList extends Component {
+  constructor(props) {
+    super(props);
+
+    // https://github.com/react-navigation/react-navigation/issues/922#issuecomment-437782511
+    this.updateRenderAfterNavigation = this.props.navigation.addListener('willFocus', () => {
+      this.fetchData()
+    });
+  }
+
+  componentWillUnmount() {
+    this.updateRenderAfterNavigation
+  }
+
   state = {
     decklist: {},
     logStatus: 'beforeDidMount',
@@ -81,9 +94,7 @@ class DeckList extends Component {
     )
   }
 
-  componentDidMount () {
-    // https://facebook.github.io/react-native/docs/asyncstorage#mergeitem
-
+  fetchData = () => {
     AsyncStorage.getItem(DECK_LIST).then(data => {
       if (data) {
         this.setState({ logStatus: 'hasData', decklist: JSON.parse(data) });
@@ -95,6 +106,10 @@ class DeckList extends Component {
         });
       }
     });
+  }
+
+  componentDidMount () {
+    this.fetchData();
   }
 
   render() {
@@ -115,16 +130,14 @@ class Deck extends Component {
   constructor(props) {
     super(props);
 
-    this.reRenderSomething = this.props.navigation.addListener('willFocus', () => {
-      //Put your code here you want to rerender, in my case i want to rerender the data
-      //im fetching from firebase and display the changes
-
+    // https://github.com/react-navigation/react-navigation/issues/922#issuecomment-437782511
+    this.updateRenderAfterNavigation = this.props.navigation.addListener('willFocus', () => {
       this.fetchCardsCount()
     });
   }
 
   componentWillUnmount() {
-    this.reRenderSomething
+    this.updateRenderAfterNavigation
   }
 
   state = {
@@ -183,6 +196,7 @@ class Deck extends Component {
 class Quiz extends Component {
   state = {
     hits: 0,
+    cards: [],
     cardActiveIndex: 0,
     isShowingQuestion: true,
     isResult: false,
@@ -190,8 +204,7 @@ class Quiz extends Component {
 
   userAnswer = (isAnswerCorrect) => {
     this.setState(prevState => {
-      const isResult = (this.props.cards.length === (prevState.cardActiveIndex + 1)) ? true : false;
-      // debugger;
+      const isResult = (prevState.cards.length === (prevState.cardActiveIndex + 1)) ? true : false;
       return {
         ...prevState,
         hits: prevState.hits + isAnswerCorrect,
@@ -210,9 +223,30 @@ class Quiz extends Component {
     })
   }
 
+  fecthCards = () => {
+    AsyncStorage.getItem(DECK_LIST).then(data => {
+      const { id } = this.props;
+      const cards = JSON.parse(data).filter(item => item.id === id)[0].cards;
+      this.setState({ cards });
+    });
+  }
+
+  restartQuiz = () => {
+    this.setState({
+      hits: 0,
+      cardActiveIndex: 0,
+      isShowingQuestion: true,
+      isResult: false,
+    });
+  }
+
+  componentDidMount() {
+    this.fecthCards()
+  }
+
   render() {
-    const { cardActiveIndex, hits, isShowingQuestion, isResult } = this.state;
-    const { id, cards } = this.props;
+    const { cardActiveIndex, hits, isShowingQuestion, isResult, cards } = this.state;
+    const { id } = this.props;
     const currentQuestion = cards[cardActiveIndex];
     const title = currentQuestion ? ((isShowingQuestion) ? currentQuestion.question : currentQuestion.answer) : '';
 
@@ -221,8 +255,9 @@ class Quiz extends Component {
         {isResult ? (
           <View>
             <Text>
-              Score: {`${hits} correct answers of ${cards.length}.`}
+              Score: {`${hits} correct answers of ${cards.length} questions.`}
             </Text>
+            <Button title={'Restart Quiz'} onPress={ev => this.restartQuiz()} />
           </View>
         ) : (
           <View>
@@ -412,11 +447,10 @@ class QuizView extends Component {
 
   render() {
     const id = this.props.navigation.getParam('deckId');
-    const deck = decklist.filter(item => id === item.id)[0];
 
     return (
       <View>
-        <Quiz id={id} cards={deck.cards} navigation={this.props.navigation} />
+        <Quiz id={id} navigation={this.props.navigation} />
       </View>
     );
   }
