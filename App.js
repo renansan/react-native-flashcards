@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { AsyncStorage, StyleSheet, Text, View, FlatList, Button, TouchableHighlight, StatusBar, TextInput } from 'react-native';
+import { Animated, AsyncStorage, StyleSheet, Text, View, FlatList, Button, TouchableHighlight, StatusBar, TextInput } from 'react-native';
 import { createBottomTabNavigator, createStackNavigator, createAppContainer, createDrawerNavigator } from 'react-navigation';
 // import Reactotron from 'reactotron-react-native';
 
@@ -137,13 +137,14 @@ class Deck extends Component {
   }
 
   componentWillUnmount() {
-    this.updateRenderAfterNavigation
+    this.updateRenderAfterNavigation;
   }
 
   state = {
     id: '',
     title: '',
     cardsCount: 0,
+    bounceValue: new Animated.Value(1),
   }
 
   startQuiz = (ev) => {
@@ -168,6 +169,7 @@ class Deck extends Component {
   }
 
   componentDidMount () {
+    const { bounceValue} = this.state;
     const id = this.props.navigation.getParam('deckId');
     const title = this.props.navigation.getParam('deckTitle');
     this.fetchCardsCount();
@@ -175,17 +177,23 @@ class Deck extends Component {
       id,
       title,
     });
+
+    Animated.sequence([
+      Animated.timing(bounceValue, { duration: 300, toValue: 1.2}),
+      Animated.spring(bounceValue, { toValue: 1, friction: 8})
+    ]).start()
   }
 
   render() {
     const { title, cardsCount } = this.state;
     const hasCards = cardsCount ? true : false;
+    const { bounceValue} = this.state;
     return (
       <View>
-        <View>
+        <Animated.View style={[{transform: [{scale: bounceValue}]}]}>
           <Text>{title}</Text>
           <Text>{cardsCount} cards</Text>
-        </View>
+        </Animated.View>
         <View>
           <Button disabled={!hasCards} title={'Start Quiz!'} onPress={this.startQuiz} />
           <Button title={'Add Card!'} onPress={this.addCard} />
