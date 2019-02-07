@@ -1,9 +1,9 @@
 import React, { Component } from 'react';
 import { AsyncStorage, StyleSheet, Text, View, FlatList, Button, TouchableHighlight, StatusBar, TextInput } from 'react-native';
 import { createBottomTabNavigator, createStackNavigator, createAppContainer, createDrawerNavigator } from 'react-navigation';
-import Reactotron from 'reactotron-react-native';
+// import Reactotron from 'reactotron-react-native';
 
-const cons = Reactotron || console;
+const cons = console // || Reactotron;
 
 /**
  * Database
@@ -14,7 +14,6 @@ const decklist = [
     key: '1',
     id: 'deck-1',
     title: 'Deck 1',
-    cardsCount: 3,
     cards: [
       {
         question: 'What is React?',
@@ -34,26 +33,16 @@ const decklist = [
     key: '2',
     id: 'deck-2',
     title: 'Deck 2',
-    cardsCount: 0,
     cards: [],
   },
 ]
-const storeData = async (key, value, cb) => {
-  try {
-    await AsyncStorage.mergeItem(key, value);
-  } catch (error) {
-    // Error retrieving data
-    console.log(error.message);
-  }
+const storeData = (key, value, callback = function () {}) => {
+  AsyncStorage.setItem(key, JSON.stringify(value)).then(error => {
+    AsyncStorage.getItem(key).then(data => callback());
+  });
 }
-const fetchData = async (key, cb) => {
-  let data = null;
-  try {
-    data = await AsyncStorage.getItem(key) || null;
-  } catch (error) {
-    console.log(error.message);
-  }
-  return data;
+const fetchData = (key, callback = function () {}) => {
+  AsyncStorage.getItem(key).then(data => callback());
 }
 
 /**
@@ -94,12 +83,15 @@ class DeckList extends Component {
 
   componentDidMount () {
     // https://facebook.github.io/react-native/docs/asyncstorage#mergeitem
+
     AsyncStorage.getItem(DECK_LIST).then(data => {
       if (data) {
-        this.setState({ decklist: JSON.parse(data) });
+        this.setState({ logStatus: 'hasData', decklist: JSON.parse(data) });
       } else {
         AsyncStorage.setItem(DECK_LIST, JSON.stringify(decklist)).then(data => {
-          this.setState({ decklist: JSON.parse(data) });
+          AsyncStorage.getItem(DECK_LIST).then(data => {
+            this.setState({ logStatus: 'hasNoData', decklist: JSON.parse(data) });
+          });
         });
       }
     });
@@ -120,6 +112,21 @@ class DeckList extends Component {
 }
 
 class Deck extends Component {
+  constructor(props) {
+    super(props);
+
+    this.reRenderSomething = this.props.navigation.addListener('willFocus', () => {
+      //Put your code here you want to rerender, in my case i want to rerender the data
+      //im fetching from firebase and display the changes
+
+      this.fetchCardsCount()
+    });
+  }
+
+  componentWillUnmount() {
+    this.reRenderSomething
+  }
+
   state = {
     id: '',
     title: '',
@@ -134,18 +141,26 @@ class Deck extends Component {
 
   addCard = (ev) => {
     this.props.navigation.navigate('AddCard', {
+      deckId: this.state.id,
       deckTitle: this.state.title,
+    });
+  }
+
+  fetchCardsCount = () => {
+    AsyncStorage.getItem(DECK_LIST).then(data => {
+      const id = this.props.navigation.getParam('deckId');
+      const cardsCount = JSON.parse(data).filter(item => item.id === id)[0].cards.length;
+      this.setState({ cardsCount });
     });
   }
 
   componentDidMount () {
     const id = this.props.navigation.getParam('deckId');
     const title = this.props.navigation.getParam('deckTitle');
-    const cardsCount = this.props.navigation.getParam('cardsCount');
+    this.fetchCardsCount();
     this.setState({
       id,
       title,
-      cardsCount,
     });
   }
 
@@ -239,26 +254,34 @@ class AddDeck extends Component {
 
   onPress = (ev) => {
     AsyncStorage.getItem(DECK_LIST).then(data => {
+      const { title } = this.state;
+      let newData = [];
+      let newDeck = null;
+      let key = '1';
+
       if (data) {
-        const prevData = JSON.parse(data);
-        const key = prevData.length + 1;
-        const { title} = this.state;
-        const newDeck = {
-          key,
-          id: `deck-${key}`,
-          title,
-          cardsCount: 0,
-          cards: [],
-        }
-        debugger;
-        AsyncStorage.mergeItem(DECK_LIST, JSON.stringify([...newDeck])).then(data => {
-          this.setState({ decklist: JSON.parse(data), logStatus: 'merging' + data });
-        });
-      } else {
-        AsyncStorage.setItem(DECK_LIST, JSON.stringify([newDeck])).then(data => {
-          this.setState({ decklist: JSON.parse(data), logStatus: 'setting' + data });
-        });
+        newData = JSON.parse(data);
+        key = (newData.length + 1).toString();
       }
+
+      newDeck = {
+        key,
+        id: `deck-${key}`,
+        title,
+        cardsCount: 0,
+        cards: [],
+      }
+      newData = newData.concat(newDeck);
+
+      AsyncStorage.setItem(DECK_LIST, JSON.stringify(newData)).then(error => {
+        AsyncStorage.getItem(DECK_LIST).then(data => {
+          this.props.navigation.navigate('Deck', {
+            deckId: newDeck.id,
+            deckTitle: newDeck.title,
+            cardsCount: 0,
+          });
+        });
+      });
     });
   }
 
@@ -279,6 +302,39 @@ class AddDeck extends Component {
 }
 
 class AddCard extends Component {
+  state = {
+    question: '',
+    answer: '',
+  }
+
+  onPress = (ev) => {
+    AsyncStorage.getItem(DECK_LIST).then(data => {
+      if (data) {
+        const { question, answer } = this.state;
+        const { id } = this.props;
+        const prevData = JSON.parse(data);
+        const newData = prevData.map(item => {
+          if (item.id === id) {
+            item.cards.push({
+              question,
+              answer,
+            });
+          }
+
+          return item;
+        });
+
+        AsyncStorage.setItem(DECK_LIST, JSON.stringify(newData)).then(error => {
+          AsyncStorage.getItem(DECK_LIST).then(data => {
+            this.props.navigation.goBack();
+          });
+        });
+      } else {
+        // Has no data on AsyncStorage
+      }
+    });
+  }
+
   render() {
     return (
       <View>
@@ -286,20 +342,20 @@ class AddCard extends Component {
           <Text>Question</Text>
           <TextInput
              style={{height: 40, borderColor: 'gray', borderWidth: 1}}
-             onChangeText={(text) => 'this.setState({text})'}
-             value={'this.state.text'}
+             onChangeText={(question) => this.setState({question})}
+             value={this.state.question}
            />
         </View>
         <View>
           <Text>Answer</Text>
           <TextInput
              style={{height: 40, borderColor: 'gray', borderWidth: 1}}
-             onChangeText={(text) => 'this.setState({text})'}
-             value={'this.state.text'}
+             onChangeText={(answer) => this.setState({answer})}
+             value={this.state.answer}
            />
         </View>
         <View>
-          <Button title="Submit" onPress={ev => {}} />
+          <Button title="Submit" onPress={this.onPress} />
         </View>
         <View>
           {/* <FormLabel>Name</FormLabel> <FormInput onChangeText={someFunction}/> <FormValidationMessage>{'This field is required'}</FormValidationMessage> */}
@@ -381,6 +437,9 @@ class AddDeckView extends Component {
 }
 
 class AddCardView extends Component {
+  state = {
+    id: '',
+  }
 
   static navigationOptions = ({ navigation }) => {
     deckTitle = navigation.getParam('deckTitle');
@@ -389,10 +448,15 @@ class AddCardView extends Component {
     };
   };
 
+  componentDidMount() {
+    const id = this.props.navigation.getParam('deckId');
+    this.setState({ id });
+  }
+
   render() {
     return (
       <View>
-        <AddCard navigation={this.props.navigation} />
+        <AddCard id={this.state.id} navigation={this.props.navigation} />
       </View>
     );
   }
