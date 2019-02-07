@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import { Animated, AsyncStorage, StyleSheet, Text, View, FlatList, Button, TouchableHighlight, StatusBar, TextInput } from 'react-native';
 import { createBottomTabNavigator, createStackNavigator, createAppContainer, createDrawerNavigator } from 'react-navigation';
+import { clearLocalNotification, setLocalNotification } from './utils/helpers';
 // import Reactotron from 'reactotron-react-native';
 
 const cons = console // || Reactotron;
@@ -416,6 +417,13 @@ class AddCard extends Component {
  * Views
  */
 class HomeView extends Component {
+  componentDidMount() {
+    // setLocalNotification()
+  }
+
+  // // Clear local notification
+  // clearLocalNotification()
+  //   .then(setLocalNotification)
 
   static navigationOptions = {
     title: 'Home',
@@ -430,6 +438,7 @@ class HomeView extends Component {
         />
         <DeckList decklist={decklist} navigation={this.props.navigation} />
         <Button title="Add Deck" onPress={ev => this.props.navigation.navigate('AddDeck')} />
+        <Button title="Notify" onPress={ev => setLocalNotification()} />
       </View>
     );
   }
@@ -482,6 +491,22 @@ class AddDeckView extends Component {
   }
 }
 
+class NotificationView extends Component {
+  static navigationOptions = ({ navigation }) => {
+    return {
+      title: `Notifications test`,
+    };
+  };
+
+  componentDidMount() {}
+
+  render() {
+    return (
+      <Timer />
+    );
+  }
+}
+
 class AddCardView extends Component {
   state = {
     id: '',
@@ -518,6 +543,7 @@ const Stack = {
   Quiz: {screen: QuizView},
   AddDeck: {screen: AddDeckView},
   AddCard: {screen: AddCardView},
+  Notification: {screen: NotificationView},
 };
 
 const HeaderNavigator = createStackNavigator(Stack);
@@ -528,6 +554,7 @@ const StackNav = {
   Quiz: {screen: QuizView},
   AddDeck: {screen: AddDeckView},
   AddCard: {screen: AddCardView},
+  Notification: {screen: NotificationView},
 };
 
 const BottomNavigator = createBottomTabNavigator(Stack);
