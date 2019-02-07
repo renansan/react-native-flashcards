@@ -115,8 +115,8 @@ class DeckList extends Component {
   render() {
     return (
       <View>
-        <Text>{JSON.stringify(this.state.logStatus)}</Text>
-        <Text>{JSON.stringify(this.state.decklist)}</Text>
+        {/*<Text>{JSON.stringify(this.state.logStatus)}</Text>
+        <Text>{JSON.stringify(this.state.decklist)}</Text>*/}
         <FlatList
           data={this.state.decklist}
           renderItem={({item}) => this.renderDeckItem(item)}
@@ -178,14 +178,16 @@ class Deck extends Component {
   }
 
   render() {
+    const { title, cardsCount } = this.state;
+    const hasCards = cardsCount ? true : false;
     return (
       <View>
         <View>
-          <Text>{this.state.title}</Text>
-          <Text>{this.state.cardsCount} cards</Text>
+          <Text>{title}</Text>
+          <Text>{cardsCount} cards</Text>
         </View>
         <View>
-          <Button title={'Start Quiz!'} onPress={this.startQuiz} />
+          <Button disabled={!hasCards} title={'Start Quiz!'} onPress={this.startQuiz} />
           <Button title={'Add Card!'} onPress={this.addCard} />
         </View>
       </View>
@@ -210,6 +212,7 @@ class Quiz extends Component {
         hits: prevState.hits + isAnswerCorrect,
         cardActiveIndex: prevState.cardActiveIndex + 1,
         isResult,
+        isShowingQuestion: true,
       }
     })
   }
@@ -258,6 +261,7 @@ class Quiz extends Component {
               Score: {`${hits} correct answers of ${cards.length} questions.`}
             </Text>
             <Button title={'Restart Quiz'} onPress={ev => this.restartQuiz()} />
+            <Button title={'Back to Deck'} onPress={ev => this.props.navigation.goBack()} />
           </View>
         ) : (
           <View>
