@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import { Animated, StyleSheet, Text, View, TouchableHighlight } from 'react-native';
 import PropTypes from 'prop-types';
+import { colors } from '../utils/helpers';
 
 /**
  * DeckItem
@@ -30,7 +31,10 @@ class DeckItem extends Component {
     const { bounceValue } = this.state;
     return (
       <Animated.View style={[{transform: [{scale: bounceValue}]}]}>
-        <TouchableHighlight style={styles.card} onPress={this.onPress}>
+        <TouchableHighlight
+          style={styles.card}
+          underlayColor={colors.gray}
+          onPress={this.onPress}>
           <View style={styles.cardBox}>
             <Text style={styles.cardTitle}>{this.props.title}</Text>
             <Text>{`${this.props.cardsCount} cards`}</Text>
@@ -46,7 +50,7 @@ class DeckItem extends Component {
  */
 const styles = StyleSheet.create({
   card: {
-    backgroundColor: '#eee',
+    backgroundColor: colors.grayLight,
     marginVertical: 5,
     marginHorizontal: 10,
   },

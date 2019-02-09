@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import { StyleSheet, Text, View, TouchableHighlight } from 'react-native';
+import { MaterialIcons } from '@expo/vector-icons';
 import DeckItem from '../components/DeckItem';
 import { Button } from '../components/Button';
 import { fetchData, storeData } from '../utils/api';
@@ -73,8 +74,12 @@ import PropTypes from 'prop-types';
              navigation={this.props.navigation} />
          </View>
          <View>
-           <Button disabled={!hasCards} title={'Start Quiz!'} onPress={this.startQuiz} />
-           <Button title={'Add Card!'} onPress={this.addCard} />
+           <Button disabled={!hasCards} title={'Start Quiz!'} onPress={this.startQuiz}>
+             <MaterialIcons name={'playlist-play'} size={24} color={colors.white} />
+           </Button>
+           <Button title={'Add Card!'} onPress={this.addCard}>
+             <MaterialIcons name={'playlist-add'} size={24} color={colors.white} />
+           </Button>
          </View>
        </View>
      )

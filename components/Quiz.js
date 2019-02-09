@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import { StyleSheet, Text, View, TouchableHighlight } from 'react-native';
+import { MaterialIcons, MaterialCommunityIcons } from '@expo/vector-icons';
 import { Button } from '../components/Button';
 import { fetchData, storeData } from '../utils/api';
 import { colors } from '../utils/helpers';
@@ -87,8 +88,12 @@ class Quiz extends Component {
               </View>
             </View>
             <View style={styles.quizButtons}>
-              <Button title={'Restart Quiz'} onPress={ev => this.restartQuiz()} />
-              <Button title={'Back to Deck'} onPress={ev => this.props.navigation.goBack()} />
+              <Button title={'Restart Quiz'} onPress={ev => this.restartQuiz()}>
+                <MaterialCommunityIcons name={'restart'} size={24} color={colors.white} />
+              </Button>
+              <Button title={'Back to Deck'} onPress={ev => this.props.navigation.goBack()}>
+                <MaterialIcons name={'keyboard-return'} size={24} color={colors.white} />
+              </Button>
             </View>
           </View>
         ) : (
@@ -99,14 +104,21 @@ class Quiz extends Component {
               </View>
               <View>
                 <Text style={styles.quizTitle}>{title}</Text>
-                <TouchableHighlight style={styles.quizLinkContainer} onPress={this.toggleQA}>
+                <TouchableHighlight
+                  style={styles.quizLinkContainer}
+                  underlayColor="transparent"
+                  onPress={this.toggleQA}>
                   <Text style={styles.quizLink}>Show {isShowingQuestion ? 'answer' : 'question'}</Text>
                 </TouchableHighlight>
               </View>
             </View>
             <View style={styles.quizButtons}>
-              <Button styleType='success' title={'Correct'} onPress={ev => this.userAnswer(1)} />
-              <Button styleType='danger' title={'Incorrect'} onPress={ev => this.userAnswer(0)} />
+              <Button styleType='success' title={'Correct'} onPress={ev => this.userAnswer(1)}>
+                <MaterialIcons name={'check'} size={24} color={colors.white} />
+              </Button>
+              <Button styleType='danger' title={'Incorrect'} onPress={ev => this.userAnswer(0)}>
+                <MaterialIcons name={'close'} size={24} color={colors.white} />
+              </Button>
             </View>
           </View>
         )}

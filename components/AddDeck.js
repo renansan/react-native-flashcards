@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import { StyleSheet, Text, View, TextInput } from 'react-native';
+import { MaterialIcons } from '@expo/vector-icons';
 import { Button } from '../components/Button';
 import { fetchData, storeData } from '../utils/api';
 import { colors } from '../utils/helpers';
@@ -62,7 +63,9 @@ class AddDeck extends Component {
        {titleError && (
            <Text style={styles.formError}>This field is required</Text>
          )}
-       <Button title="Submit" onPress={this.onPress} />
+       <Button title="Add" onPress={this.onPress}>
+         <MaterialIcons name={'library-add'} size={24} color={colors.white} />
+       </Button>
       </View>
     )
   }

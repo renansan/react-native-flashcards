@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { StyleSheet, Text, TouchableHighlight } from 'react-native';
+import { StyleSheet, Text, View, TouchableHighlight } from 'react-native';
 import { colors } from '../utils/helpers';
 import PropTypes from 'prop-types';
 
@@ -11,7 +11,7 @@ class Button extends Component {
   }
 
   render() {
-    const { title, onPress, styleType, disabled } = this.props;
+    const { title, onPress, styleType, disabled, children } = this.props;
     const underlayColor =
       disabled ?
       colors.gray :
@@ -25,7 +25,12 @@ class Button extends Component {
         style={buttonStyle}
         underlayColor={underlayColor}
         onPress={this.onButtonPress}>
-        <Text style={styles.buttonText}>{title}</Text>
+        <View style={styles.buttonBox}>
+          {children}
+          <Text style={styles.buttonText}>
+            {title}
+          </Text>
+        </View>
       </TouchableHighlight>
     )
   }
@@ -36,9 +41,13 @@ class Button extends Component {
  */
 const styles = StyleSheet.create({
   button: {
-    alignItems: 'center',
     marginVertical: 5,
     backgroundColor: colors.blue,
+  },
+  buttonBox: {
+    alignItems: 'center',
+    justifyContent: 'center',
+    flexDirection: 'row',
   },
   danger: {
     backgroundColor: colors.red,
@@ -54,11 +63,13 @@ const styles = StyleSheet.create({
     fontSize: 16,
     fontWeight: 'bold',
     marginVertical: 15,
+    marginHorizontal: 5,
   },
 });
 
 Button.propTypes = {
   title: PropTypes.string.isRequired,
+  icon: PropTypes.func,
   styleType: PropTypes.string,
   disabled: PropTypes.bool,
   onPress: PropTypes.func,

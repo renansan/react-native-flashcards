@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import { StyleSheet, Text, View, TextInput } from 'react-native';
+import { MaterialIcons } from '@expo/vector-icons';
 import { Button } from '../components/Button';
 import { DECK_LIST, colors } from '../utils/helpers';
 import { fetchData, storeData } from '../utils/api';
@@ -81,7 +82,9 @@ class AddCard extends Component {
          )}
         </View>
         <View>
-          <Button title="Submit" onPress={this.onPress} />
+          <Button title={'Add'} onPress={this.onPress}>
+            <MaterialIcons name={'playlist-add'} size={24} color={colors.white} />
+          </Button>
         </View>
       </View>
     )
