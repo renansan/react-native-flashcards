@@ -3,7 +3,7 @@ This is my version of the Flashcards project from Udacity's React course.
 The app was tested in the latest version of Android only (Nexus 5X, Android 9), emulated with Android Studio.
 
 ## Demo
-- link for demo here
+- https://expo.io/@renansan/flashcards
 
 ## Development
 To get started developing:

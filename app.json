@@ -25,6 +25,6 @@
     "ios": {
       "supportsTablet": true
     },
-    "description": ""
+    "description": "This is my version of the Flashcards project from Udacity's React course. More on github: https://github.com/renansan/react-native-flashcards."
   }
 }
