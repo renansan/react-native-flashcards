@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import React, { Component, PureComponent } from 'react';
 import { StyleSheet, Text, View, TouchableHighlight } from 'react-native';
 import { MaterialIcons, MaterialCommunityIcons } from '@expo/vector-icons';
 import { Button } from '../components/Button';
@@ -6,7 +6,7 @@ import { fetchData, storeData } from '../utils/api';
 import { colors } from '../utils/helpers';
 import PropTypes from 'prop-types';
 
-class Quiz extends Component {
+class Quiz extends PureComponent {
   state = {
     hits: 0,
     cards: [],

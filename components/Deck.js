@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
-import { StyleSheet, Text, View, TouchableHighlight } from 'react-native';
-import { MaterialIcons } from '@expo/vector-icons';
+import { Alert, StyleSheet, Text, View, TouchableHighlight } from 'react-native';
+import { MaterialIcons, MaterialCommunityIcons } from '@expo/vector-icons';
 import DeckItem from '../components/DeckItem';
 import { Button } from '../components/Button';
 import { fetchData, storeData } from '../utils/api';
@@ -43,6 +43,44 @@ import PropTypes from 'prop-types';
      });
    }
 
+   editDeck = (ev) => {
+     this.props.navigation.navigate('AddDeck', {
+       deckId: this.state.id,
+       deckTitle: this.state.title,
+     });
+   }
+
+   deleteDeck = () => {
+     const removeItem = () => {
+       const id = this.props.navigation.getParam('deckId');
+       
+       fetchData(data => {
+         if (data && id) {
+           const prevData = JSON.parse(data);
+           const newData = prevData.filter(item => item.id !== id);
+
+           storeData(newData, data => {
+             this.props.navigation.navigate('Home');
+           });
+         }
+       });
+     }
+
+     Alert.alert(
+      'Delete Deck',
+      'Are you sure you want to delete this deck?',
+      [
+        {
+          text: 'Cancel',
+          style: 'cancel',
+        },
+        {
+          text: 'Yes, I want to delete',
+          onPress: () => removeItem()},
+      ],
+    );
+   }
+
    fetchCardsCount = () => {
      fetchData(data => {
        const id = this.props.navigation.getParam('deckId');
@@ -74,11 +112,17 @@ import PropTypes from 'prop-types';
              navigation={this.props.navigation} />
          </View>
          <View>
-           <Button disabled={!hasCards} title={'Start Quiz!'} onPress={this.startQuiz}>
+           <Button disabled={!hasCards} title={'Start Quiz'} onPress={this.startQuiz}>
              <MaterialIcons name={'playlist-play'} size={24} color={colors.white} />
            </Button>
-           <Button title={'Add Card!'} onPress={this.addCard}>
+           <Button title={'Add Card'} onPress={this.addCard}>
              <MaterialIcons name={'playlist-add'} size={24} color={colors.white} />
+           </Button>
+           <Button title={'Edit Deck'} onPress={this.editDeck}>
+             <MaterialCommunityIcons name={'square-edit-outline'} size={24} color={colors.white} />
+           </Button>
+           <Button title={'Delete Deck'} styleType='danger' onPress={this.deleteDeck}>
+             <MaterialCommunityIcons name={'trash-can-outline'} size={24} color={colors.white} />
            </Button>
          </View>
        </View>

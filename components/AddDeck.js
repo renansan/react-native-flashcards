@@ -14,30 +14,44 @@ class AddDeck extends Component {
 
   onPress = (ev) => {
     const { title } = this.state;
+    const id = this.props.navigation.getParam('deckId');
+
     if (title.length) {
       fetchData(data => {
         let newData = [];
         let newDeck = null;
-        let key = '1';
+        let key = id || '1';
 
         if (data) {
-          newData = JSON.parse(data);
-          key = (newData.length + 1).toString();
+          prevData = JSON.parse(data);
+          if (id) {
+            newData = prevData.map(item => {
+              if (item.id === id) {
+                item.title = title;
+              }
+              return item;
+            });
+          } else {
+            key = (newData.length + 1).toString();
+
+            newDeck = {
+              key,
+              id: `deck-${key}`,
+              title,
+              cardsCount: 0,
+              cards: [],
+            }
+
+            newData = prevData.concat(newDeck);
+          }
         }
 
-        newDeck = {
-          key,
-          id: `deck-${key}`,
-          title,
-          cardsCount: 0,
-          cards: [],
-        }
-        newData = newData.concat(newDeck);
+        debugger;
 
         storeData(newData, data => {
           this.props.navigation.navigate('Deck', {
-            deckId: newDeck.id,
-            deckTitle: newDeck.title,
+            deckId: id || newDeck.id,
+            deckTitle: title,
             cardsCount: 0,
           });
         });
@@ -49,21 +63,34 @@ class AddDeck extends Component {
     }
   }
 
+  componentDidMount() {
+    const id = this.props.navigation.getParam('deckId');
+    const title = this.props.navigation.getParam('deckTitle');
+    debugger;
+    if (id && title) {
+      this.setState({
+        id,
+        title,
+      });
+    }
+  }
+
   render() {
     const { titleError } = this.state;
+    const id = this.props.navigation.getParam('deckId');
     return (
       <View style={styles.formControl}>
-        <Text style={styles.formLabel}>Type the title of the new deck</Text>
+        <Text style={styles.formLabel}>Type the title of the deck</Text>
         <TextInput
            style={styles.formInput}
            autoFocus={true}
-           onChangeText={(title) => this.setState({title})}
+           onChangeText={(title) => this.setState({title, titleError: false })}
            value={this.state.title}
          />
        {titleError && (
            <Text style={styles.formError}>This field is required</Text>
          )}
-       <Button title="Add" onPress={this.onPress}>
+       <Button title={`${(id) ? 'Edit' : 'Add'}`} onPress={this.onPress}>
          <MaterialIcons name={'library-add'} size={24} color={colors.white} />
        </Button>
       </View>
