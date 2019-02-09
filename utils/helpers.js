@@ -8,30 +8,25 @@ export const colors = {
   white: '#fff',
 };
 
-export const DECK_LIST = 'DECK_LIST';
-const NOTIFICATION_KEY = 'Flashcards:notifications'
+const NOTIFICATION_KEY = 'Flashcards:notifications';
+const notification = {
+  title: 'It\'s time to practice!',
+  body: "👋 don't forget to practice today!",
+  ios: {
+    sound: true,
+  },
+  android: {
+    sound: true,
+    priority: 'high',
+    sticky: false,
+    vibrate: true,
+  }
+}
 
 export function clearLocalNotification () {
   return AsyncStorage.removeItem(NOTIFICATION_KEY)
     .then(Notifications.cancelAllScheduledNotificationsAsync)
 }
-
-function createNotification () {
-  return {
-    title: 'It\'s time to practice!',
-    body: "👋 don't forget to practice today!",
-    ios: {
-      sound: true,
-    },
-    android: {
-      sound: true,
-      priority: 'high',
-      sticky: false,
-      vibrate: true,
-    }
-  }
-}
-
 export function setLocalNotification () {
   AsyncStorage.getItem(NOTIFICATION_KEY)
   .then(JSON.parse)
@@ -50,7 +45,7 @@ export function setLocalNotification () {
             tomorrow.setMintutes(0)
 
             Notifications.scheduleLocalNotificationsAsync(
-              createNotification(),
+              notification,
               {
                 time: tomorrow,
                 repeat: 'day',

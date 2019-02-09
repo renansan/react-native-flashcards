@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
-import { AsyncStorage, StyleSheet, View, FlatList } from 'react-native';
+import { StyleSheet, View, FlatList } from 'react-native';
 import DeckItem from './DeckItem';
-import { DECK_LIST } from '../utils/helpers';
+import { fetchData, storeData } from '../utils/api';
 
 const decklist = [
   {
@@ -56,14 +56,12 @@ class DeckList extends Component {
   }
 
   fetchData = () => {
-    AsyncStorage.getItem(DECK_LIST).then(data => {
+    fetchData(data => {
       if (data) {
         this.setState({ decklist: JSON.parse(data) });
       } else {
-        AsyncStorage.setItem(DECK_LIST, JSON.stringify(decklist)).then(data => {
-          AsyncStorage.getItem(DECK_LIST).then(data => {
-            this.setState({ decklist: JSON.parse(data) });
-          });
+        storeData(decklist, data => {
+          this.setState({ decklist: JSON.parse(data) });
         });
       }
     });

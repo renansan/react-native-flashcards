@@ -1,7 +1,8 @@
 import React, { Component } from 'react';
-import { AsyncStorage, StyleSheet, Text, View, TextInput } from 'react-native';
+import { StyleSheet, Text, View, TextInput } from 'react-native';
 import { Button } from '../components/Button';
 import { DECK_LIST, colors } from '../utils/helpers';
+import { fetchData, storeData } from '../utils/api';
 
 class AddCard extends Component {
   state = {
@@ -14,7 +15,8 @@ class AddCard extends Component {
   onPress = (ev) => {
     const { question, answer } = this.state;
     if (question.length && answer.length) {
-      AsyncStorage.getItem(DECK_LIST).then(data => {
+
+      fetchData(data => {
         if (data) {
           const { id } = this.props;
           const prevData = JSON.parse(data);
@@ -29,13 +31,11 @@ class AddCard extends Component {
             return item;
           });
 
-          AsyncStorage.setItem(DECK_LIST, JSON.stringify(newData)).then(error => {
-            AsyncStorage.getItem(DECK_LIST).then(data => {
-              this.props.navigation.goBack();
-            });
-          });
+          storeData(newData, (data) => {
+            this.props.navigation.goBack()
+          })
         } else {
-          // Has no data on AsyncStorage
+          // Has no data on storage
         }
       });
     } else {

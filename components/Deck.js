@@ -1,8 +1,9 @@
 import React, { Component } from 'react';
-import { AsyncStorage, Button, StyleSheet, Text, View, TouchableHighlight } from 'react-native';
+import { Button, StyleSheet, Text, View, TouchableHighlight } from 'react-native';
 import DeckItem from '../components/DeckItem';
 // import { Button } from '../components/Button';
-import { DECK_LIST, colors } from '../utils/helpers';
+import { fetchData, storeData } from '../utils/api';
+import { colors } from '../utils/helpers';
 
 /**
  * Deck
@@ -41,7 +42,7 @@ import { DECK_LIST, colors } from '../utils/helpers';
    }
 
    fetchCardsCount = () => {
-     AsyncStorage.getItem(DECK_LIST).then(data => {
+     fetchData(data => {
        const id = this.props.navigation.getParam('deckId');
        const cardsCount = JSON.parse(data).filter(item => item.id === id)[0].cards.length;
        this.setState({ cardsCount });

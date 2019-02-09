@@ -1,7 +1,8 @@
 import React, { Component } from 'react';
-import { AsyncStorage, StyleSheet, Text, View, TextInput } from 'react-native';
+import { StyleSheet, Text, View, TextInput } from 'react-native';
 import { Button } from '../components/Button';
-import { DECK_LIST, colors } from '../utils/helpers';
+import { fetchData, storeData } from '../utils/api';
+import { colors } from '../utils/helpers';
 
 class AddDeck extends Component {
   state = {
@@ -12,7 +13,7 @@ class AddDeck extends Component {
   onPress = (ev) => {
     const { title } = this.state;
     if (title.length) {
-      AsyncStorage.getItem(DECK_LIST).then(data => {
+      fetchData(data => {
         let newData = [];
         let newDeck = null;
         let key = '1';
@@ -31,13 +32,11 @@ class AddDeck extends Component {
         }
         newData = newData.concat(newDeck);
 
-        AsyncStorage.setItem(DECK_LIST, JSON.stringify(newData)).then(error => {
-          AsyncStorage.getItem(DECK_LIST).then(data => {
-            this.props.navigation.navigate('Deck', {
-              deckId: newDeck.id,
-              deckTitle: newDeck.title,
-              cardsCount: 0,
-            });
+        storeData(newData, data => {
+          this.props.navigation.navigate('Deck', {
+            deckId: newDeck.id,
+            deckTitle: newDeck.title,
+            cardsCount: 0,
           });
         });
       });

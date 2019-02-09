@@ -1,7 +1,8 @@
 import React, { Component } from 'react';
-import { AsyncStorage, StyleSheet, Text, View, TouchableHighlight } from 'react-native';
+import { StyleSheet, Text, View, TouchableHighlight } from 'react-native';
 import { Button, ButtonDanger, ButtonSuccess } from '../components/Button';
-import { DECK_LIST, colors } from '../utils/helpers';
+import { fetchData, storeData } from '../utils/api';
+import { colors } from '../utils/helpers';
 
 class Quiz extends Component {
   state = {
@@ -35,7 +36,7 @@ class Quiz extends Component {
   }
 
   fecthCards = () => {
-    AsyncStorage.getItem(DECK_LIST).then(data => {
+    fetchData(data => {
       const { id } = this.props;
       const cards = JSON.parse(data).filter(item => item.id === id)[0].cards;
       this.setState({ cards });
