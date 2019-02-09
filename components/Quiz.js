@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import { StyleSheet, Text, View, TouchableHighlight } from 'react-native';
-import { Button, ButtonDanger, ButtonSuccess } from '../components/Button';
+import { Button } from '../components/Button';
 import { fetchData, storeData } from '../utils/api';
 import { colors } from '../utils/helpers';
 import PropTypes from 'prop-types';
@@ -105,8 +105,8 @@ class Quiz extends Component {
               </View>
             </View>
             <View style={styles.quizButtons}>
-              <ButtonSuccess title={'Correct'} onPress={ev => this.userAnswer(1)} />
-              <ButtonDanger title={'Incorrect'} onPress={ev => this.userAnswer(0)} />
+              <Button styleType='success' title={'Correct'} onPress={ev => this.userAnswer(1)} />
+              <Button styleType='danger' title={'Incorrect'} onPress={ev => this.userAnswer(0)} />
             </View>
           </View>
         )}

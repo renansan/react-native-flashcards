@@ -5,40 +5,26 @@ import PropTypes from 'prop-types';
 
 class Button extends Component {
 
-  render() {
-    const { title, onPress } = this.props;
-    return (
-      <TouchableHighlight
-        style={styles.button}
-        onPress={onPress}>
-        <Text style={styles.buttonText}>{title}</Text>
-      </TouchableHighlight>
-    )
+  onButtonPress = (ev) => {
+    const {onPress, disabled} = this.props;
+    if (!disabled && onPress) onPress(ev);
   }
-}
-
-class ButtonDanger extends Component {
 
   render() {
-    const { title, onPress } = this.props;
+    const { title, onPress, styleType, disabled } = this.props;
+    const underlayColor =
+      disabled ?
+      colors.gray :
+      colors.state[`${styleType}Active`] || colors.state['primaryActive'];
+    const buttonStyle = [styles.button];
+    if (styleType && styles[styleType]) buttonStyle.push(styles[styleType]);
+    if (disabled) buttonStyle.push(styles['disabled']);
+
     return (
       <TouchableHighlight
-        style={styles.buttonDanger}
-        onPress={onPress}>
-        <Text style={styles.buttonText}>{title}</Text>
-      </TouchableHighlight>
-    )
-  }
-}
-
-class ButtonSuccess extends Component {
-
-  render() {
-    const { title, onPress } = this.props;
-    return (
-      <TouchableHighlight
-        style={styles.buttonSuccess}
-        onPress={onPress}>
+        style={buttonStyle}
+        underlayColor={underlayColor}
+        onPress={this.onButtonPress}>
         <Text style={styles.buttonText}>{title}</Text>
       </TouchableHighlight>
     )
@@ -54,15 +40,14 @@ const styles = StyleSheet.create({
     marginVertical: 5,
     backgroundColor: colors.blue,
   },
-  buttonDanger: {
-    alignItems: 'center',
-    marginVertical: 5,
+  danger: {
     backgroundColor: colors.red,
   },
-  buttonSuccess: {
-    alignItems: 'center',
-    marginVertical: 5,
+  success: {
     backgroundColor: colors.green,
+  },
+  disabled: {
+    backgroundColor: colors.gray,
   },
   buttonText: {
     color: colors.white,
@@ -73,18 +58,10 @@ const styles = StyleSheet.create({
 });
 
 Button.propTypes = {
-  title: PropTypes.string,
+  title: PropTypes.string.isRequired,
+  styleType: PropTypes.string,
+  disabled: PropTypes.bool,
   onPress: PropTypes.func,
 };
 
-ButtonDanger.propTypes = {
-  title: PropTypes.string,
-  onPress: PropTypes.func,
-};
-
-ButtonSuccess.propTypes = {
-  title: PropTypes.string,
-  onPress: PropTypes.func,
-};
-
-export { Button, ButtonDanger, ButtonSuccess };
+export { Button };

@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
-import { Button, StyleSheet, Text, View, TouchableHighlight } from 'react-native';
+import { StyleSheet, Text, View, TouchableHighlight } from 'react-native';
 import DeckItem from '../components/DeckItem';
-// import { Button } from '../components/Button';
+import { Button } from '../components/Button';
 import { fetchData, storeData } from '../utils/api';
 import { colors } from '../utils/helpers';
 import PropTypes from 'prop-types';
@@ -74,7 +74,7 @@ import PropTypes from 'prop-types';
          </View>
          <View>
            <Button disabled={!hasCards} title={'Start Quiz!'} onPress={this.startQuiz} />
-           <Button styles={{ backgroundColor: colors.red }} title={'Add Card!'} onPress={this.addCard} />
+           <Button title={'Add Card!'} onPress={this.addCard} />
          </View>
        </View>
      )
