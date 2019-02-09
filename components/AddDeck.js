@@ -46,8 +46,6 @@ class AddDeck extends Component {
           }
         }
 
-        debugger;
-
         storeData(newData, data => {
           this.props.navigation.navigate('Deck', {
             deckId: id || newDeck.id,
@@ -66,7 +64,7 @@ class AddDeck extends Component {
   componentDidMount() {
     const id = this.props.navigation.getParam('deckId');
     const title = this.props.navigation.getParam('deckTitle');
-    debugger;
+    
     if (id && title) {
       this.setState({
         id,

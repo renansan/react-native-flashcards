@@ -53,7 +53,7 @@ import PropTypes from 'prop-types';
    deleteDeck = () => {
      const removeItem = () => {
        const id = this.props.navigation.getParam('deckId');
-       
+
        fetchData(data => {
          if (data && id) {
            const prevData = JSON.parse(data);
