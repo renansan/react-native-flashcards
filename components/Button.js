@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import { StyleSheet, Text, TouchableHighlight } from 'react-native';
 import { colors } from '../utils/helpers';
+import PropTypes from 'prop-types';
 
 class Button extends Component {
 
@@ -70,5 +71,20 @@ const styles = StyleSheet.create({
     marginVertical: 15,
   },
 });
+
+Button.propTypes = {
+  title: PropTypes.string,
+  onPress: PropTypes.func,
+};
+
+ButtonDanger.propTypes = {
+  title: PropTypes.string,
+  onPress: PropTypes.func,
+};
+
+ButtonSuccess.propTypes = {
+  title: PropTypes.string,
+  onPress: PropTypes.func,
+};
 
 export { Button, ButtonDanger, ButtonSuccess };

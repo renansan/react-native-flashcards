@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import { StyleSheet, View, FlatList } from 'react-native';
 import DeckItem from './DeckItem';
 import { fetchData, storeData } from '../utils/api';
+import PropTypes from 'prop-types';
 
 const decklist = [
   {
@@ -82,5 +83,9 @@ class DeckList extends Component {
     )
   }
 }
+
+DeckList.propTypes = {
+  navigation: PropTypes.object.isRequired,
+};
 
 export default DeckList;

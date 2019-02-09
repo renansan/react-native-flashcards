@@ -3,6 +3,7 @@ import { StyleSheet, Text, View, TouchableHighlight } from 'react-native';
 import { Button, ButtonDanger, ButtonSuccess } from '../components/Button';
 import { fetchData, storeData } from '../utils/api';
 import { colors } from '../utils/helpers';
+import PropTypes from 'prop-types';
 
 class Quiz extends Component {
   state = {
@@ -170,5 +171,10 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
   },
 });
+
+Quiz.propTypes = {
+  id: PropTypes.string.isRequired,
+  navigation: PropTypes.object.isRequired,
+};
 
 export default Quiz;

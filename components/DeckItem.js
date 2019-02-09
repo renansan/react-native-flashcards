@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import { Animated, StyleSheet, Text, View, TouchableHighlight } from 'react-native';
+import PropTypes from 'prop-types';
 
 /**
  * DeckItem
@@ -59,5 +60,12 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
   },
 });
+
+DeckItem.propTypes = {
+  id: PropTypes.string.isRequired,
+  title: PropTypes.string.isRequired,
+  cardsCount: PropTypes.number.isRequired,
+  navigation: PropTypes.object.isRequired,
+};
 
 export default DeckItem;

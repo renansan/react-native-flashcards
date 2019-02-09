@@ -3,6 +3,7 @@ import { StyleSheet, Text, View, TextInput } from 'react-native';
 import { Button } from '../components/Button';
 import { DECK_LIST, colors } from '../utils/helpers';
 import { fetchData, storeData } from '../utils/api';
+import PropTypes from 'prop-types';
 
 class AddCard extends Component {
   state = {
@@ -105,5 +106,10 @@ const styles = StyleSheet.create({
     fontSize: 14,
   }
 });
+
+AddCard.propTypes = {
+  id: PropTypes.string.isRequired,
+  navigation: PropTypes.object.isRequired,
+};
 
 export default AddCard;

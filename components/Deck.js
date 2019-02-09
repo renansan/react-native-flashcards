@@ -4,6 +4,7 @@ import DeckItem from '../components/DeckItem';
 // import { Button } from '../components/Button';
 import { fetchData, storeData } from '../utils/api';
 import { colors } from '../utils/helpers';
+import PropTypes from 'prop-types';
 
 /**
  * Deck
@@ -79,5 +80,9 @@ import { colors } from '../utils/helpers';
      )
    }
  }
+
+ Deck.propTypes = {
+   navigation: PropTypes.object.isRequired,
+ };
 
 export default Deck;

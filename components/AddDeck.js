@@ -3,6 +3,7 @@ import { StyleSheet, Text, View, TextInput } from 'react-native';
 import { Button } from '../components/Button';
 import { fetchData, storeData } from '../utils/api';
 import { colors } from '../utils/helpers';
+import PropTypes from 'prop-types';
 
 class AddDeck extends Component {
   state = {
@@ -85,5 +86,9 @@ const styles = StyleSheet.create({
     fontSize: 14,
   }
 });
+
+AddDeck.propTypes = {
+  navigation: PropTypes.object.isRequired,
+};
 
 export default AddDeck;
