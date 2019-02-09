@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
-import { StyleSheet, View, FlatList } from 'react-native';
+import { ActivityIndicator, StyleSheet, View, FlatList } from 'react-native';
 import DeckItem from './DeckItem';
+import Loading from './Loading';
 import { fetchData, storeData } from '../utils/api';
 import PropTypes from 'prop-types';
 
@@ -42,12 +43,13 @@ class DeckList extends Component {
     });
   }
 
-  componentWillUnmount() {
-    this.updateRenderAfterNavigation
-  }
-
   state = {
     decklist: {},
+    loading: false,
+  }
+
+  componentWillUnmount() {
+    this.updateRenderAfterNavigation
   }
 
   renderDeckItem = (item) => {
@@ -57,14 +59,16 @@ class DeckList extends Component {
   }
 
   fetchData = () => {
-    fetchData(data => {
-      if (data) {
-        this.setState({ decklist: JSON.parse(data) });
-      } else {
-        storeData(decklist, data => {
-          this.setState({ decklist: JSON.parse(data) });
-        });
-      }
+    this.setState({ loading: true }, () => {
+      fetchData(data => {
+        if (data) {
+          this.setState({ decklist: JSON.parse(data), loading: false });
+        } else {
+          storeData(decklist, data => {
+            this.setState({ decklist: JSON.parse(data), loading: false });
+          });
+        }
+      });
     });
   }
 
@@ -73,14 +77,20 @@ class DeckList extends Component {
   }
 
   render() {
-    return (
-      <View style={{ marginVertical: 5 }}>
-        <FlatList
-          data={this.state.decklist}
-          renderItem={({item}) => this.renderDeckItem(item)}
-        />
-      </View>
-    )
+    if (this.state.loading) {
+      return (
+        <Loading />
+      )
+    } else {
+      return (
+        <View style={{ marginVertical: 5 }}>
+          <FlatList
+            data={this.state.decklist}
+            renderItem={({item}) => this.renderDeckItem(item)}
+            />
+        </View>
+      )
+    }
   }
 }
 

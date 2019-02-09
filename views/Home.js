@@ -15,7 +15,7 @@ class HomeView extends Component {
  }
 
  static navigationOptions = {
-   title: 'Home',
+   title: 'Decks',
  };
 
  render() {
