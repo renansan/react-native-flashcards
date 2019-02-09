@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
-import { AsyncStorage, StyleSheet, Text, View, Button, TextInput } from 'react-native';
+import { AsyncStorage, StyleSheet, Text, View, TextInput } from 'react-native';
+import { Button } from '../components/Button';
 import { DECK_LIST } from '../utils/helpers';
 
 class AddCard extends Component {
@@ -39,18 +40,19 @@ class AddCard extends Component {
   render() {
     return (
       <View>
-        <View>
-          <Text>Question</Text>
+        <View style={styles.formControl}>
+          <Text style={styles.formLabel}>Type a Question</Text>
           <TextInput
-             style={{height: 40, borderColor: 'gray', borderWidth: 1}}
+             style={styles.formInput}
+             autoFocus={true}
              onChangeText={(question) => this.setState({question})}
              value={this.state.question}
            />
         </View>
-        <View>
-          <Text>Answer</Text>
+        <View style={styles.formControl}>
+          <Text style={styles.formLabel}>Type the Answer</Text>
           <TextInput
-             style={{height: 40, borderColor: 'gray', borderWidth: 1}}
+             style={styles.formInput}
              onChangeText={(answer) => this.setState({answer})}
              value={this.state.answer}
            />
@@ -62,5 +64,20 @@ class AddCard extends Component {
     )
   }
 }
+
+/**
+ * Style
+ */
+const styles = StyleSheet.create({
+  formControl: {
+    padding: 20,
+  },
+  formLabel: {
+    fontSize: 16,
+  },
+  formInput: {
+    height: 40,
+  }
+});
 
 export default AddCard;

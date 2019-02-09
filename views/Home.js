@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
-import { StyleSheet, View, Button } from 'react-native';
+import { View } from 'react-native';
 import { clearLocalNotification, setLocalNotification } from '../utils/helpers';
+import { Button } from '../components/Button';
 import DeckList from '../components/DeckList';
 
 /**
@@ -18,7 +19,7 @@ class HomeView extends Component {
  render() {
    return (
      <View style={{
-         height: '90%',
+         height: '85%',
        }}>
        <View
          style={{
@@ -37,18 +38,3 @@ class HomeView extends Component {
 }
 
 export default HomeView;
-
-/**
- * Style
- */
-const styles = StyleSheet.create({
-  container: {
-    display: 'flex',
-    flexDirection: 'column',
-    backgroundColor: '#ccc',
-    justifyContent: 'flex-start',
-  },
-  section: {
-    flexGrow: 1
-  },
-});

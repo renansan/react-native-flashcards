@@ -1,6 +1,8 @@
 import React, { Component } from 'react';
-import { AsyncStorage, Animated, Button, StyleSheet, Text, View, TouchableHighlight } from 'react-native';
-import { DECK_LIST } from '../utils/helpers';
+import { AsyncStorage, Button, StyleSheet, Text, View, TouchableHighlight } from 'react-native';
+import DeckItem from '../components/DeckItem';
+// import { Button } from '../components/Button';
+import { DECK_LIST, colors } from '../utils/helpers';
 
 /**
  * Deck
@@ -23,7 +25,6 @@ import { DECK_LIST } from '../utils/helpers';
      id: '',
      title: '',
      cardsCount: 0,
-     bounceValue: new Animated.Value(1),
    }
 
    startQuiz = (ev) => {
@@ -48,7 +49,6 @@ import { DECK_LIST } from '../utils/helpers';
    }
 
    componentDidMount () {
-     const { bounceValue} = this.state;
      const id = this.props.navigation.getParam('deckId');
      const title = this.props.navigation.getParam('deckTitle');
      this.fetchCardsCount();
@@ -56,26 +56,23 @@ import { DECK_LIST } from '../utils/helpers';
        id,
        title,
      });
-
-     Animated.sequence([
-       Animated.timing(bounceValue, { duration: 300, toValue: 1.2}),
-       Animated.spring(bounceValue, { toValue: 1, friction: 8})
-     ]).start()
    }
 
    render() {
-     const { title, cardsCount } = this.state;
+     const { id, title, cardsCount } = this.state;
      const hasCards = cardsCount ? true : false;
-     const { bounceValue} = this.state;
      return (
        <View>
-         <Animated.View style={[{transform: [{scale: bounceValue}]}]}>
-           <Text>{title}</Text>
-           <Text>{cardsCount} cards</Text>
-         </Animated.View>
+         <View>
+           <DeckItem
+             id={id}
+             title={title}
+             cardsCount={cardsCount}
+             navigation={this.props.navigation} />
+         </View>
          <View>
            <Button disabled={!hasCards} title={'Start Quiz!'} onPress={this.startQuiz} />
-           <Button title={'Add Card!'} onPress={this.addCard} />
+           <Button styles={{ backgroundColor: colors.red }} title={'Add Card!'} onPress={this.addCard} />
          </View>
        </View>
      )

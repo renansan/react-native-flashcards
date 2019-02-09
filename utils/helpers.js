@@ -1,6 +1,13 @@
 import React, { Component } from 'react';
 import { AsyncStorage } from 'react-native';
 
+export const colors = {
+  blue: '#007bff',
+  green: '#28a745',
+  red: '#dc3545',
+  white: '#fff',
+};
+
 export const DECK_LIST = 'DECK_LIST';
 const NOTIFICATION_KEY = 'Flashcards:notifications'
 

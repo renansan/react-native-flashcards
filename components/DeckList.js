@@ -75,7 +75,7 @@ class DeckList extends Component {
 
   render() {
     return (
-      <View>
+      <View style={{ marginVertical: 5 }}>
         <FlatList
           data={this.state.decklist}
           renderItem={({item}) => this.renderDeckItem(item)}

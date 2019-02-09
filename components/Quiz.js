@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
-import { AsyncStorage, Button, StyleSheet, Text, View, TouchableHighlight } from 'react-native';
-import { DECK_LIST } from '../utils/helpers';
+import { AsyncStorage, StyleSheet, Text, View, TouchableHighlight } from 'react-native';
+import { Button, ButtonDanger, ButtonSuccess } from '../components/Button';
+import { DECK_LIST, colors } from '../utils/helpers';
 
 class Quiz extends Component {
   state = {
@@ -61,29 +62,49 @@ class Quiz extends Component {
     const title = currentQuestion ? ((isShowingQuestion) ? currentQuestion.question : currentQuestion.answer) : '';
 
     return (
-      <View>
+      <View style={styles.quiz}>
         {isResult ? (
           <View>
-            <Text>
-              Score: {`${hits} correct answers of ${cards.length} questions.`}
-            </Text>
-            <Button title={'Restart Quiz'} onPress={ev => this.restartQuiz()} />
-            <Button title={'Back to Deck'} onPress={ev => this.props.navigation.goBack()} />
+            <View style={styles.quizBox}>
+              <Text>
+                Score
+              </Text>
+              <View style={styles.quizResult}>
+                <Text style={styles.quizResultHits}>Hits</Text>
+                <Text style={styles.quizResultBox}>
+                  <Text style={[styles.quizResultHighlight, styles.quizResultHits]}>{hits}</Text>
+                  <Text>{` / ${cards.length}`}</Text>
+                </Text>
+              </View>
+              <View style={styles.quizResult}>
+                <Text style={styles.quizResultMisses}>Misses</Text>
+                <Text style={styles.quizResultBox}>
+                  <Text style={[styles.quizResultHighlight, styles.quizResultMisses]}>{cards.length - hits}</Text>
+                  <Text>{` / ${cards.length}`}</Text>
+                </Text>
+              </View>
+            </View>
+            <View style={styles.quizButtons}>
+              <Button title={'Restart Quiz'} onPress={ev => this.restartQuiz()} />
+              <Button title={'Back to Deck'} onPress={ev => this.props.navigation.goBack()} />
+            </View>
           </View>
         ) : (
           <View>
-            <View>
-              <Text>{`${cardActiveIndex + 1}/${cards.length}`}</Text>
+            <View style={styles.quizBox}>
+              <View style={styles.quizCount}>
+                <Text>{`${cardActiveIndex + 1}/${cards.length}`}</Text>
+              </View>
+              <View>
+                <Text style={styles.quizTitle}>{title}</Text>
+                <TouchableHighlight style={styles.quizLinkContainer} onPress={this.toggleQA}>
+                  <Text style={styles.quizLink}>Show {isShowingQuestion ? 'answer' : 'question'}</Text>
+                </TouchableHighlight>
+              </View>
             </View>
-            <View>
-              <Text>{title}</Text>
-              <TouchableHighlight onPress={this.toggleQA}>
-                <Text>Show {isShowingQuestion ? 'answer' : 'question'}</Text>
-              </TouchableHighlight>
-            </View>
-            <View>
-              <Button title={'Correct'} onPress={ev => this.userAnswer(1)} />
-              <Button title={'Incorrect'} onPress={ev => this.userAnswer(0)} />
+            <View style={styles.quizButtons}>
+              <ButtonSuccess title={'Correct'} onPress={ev => this.userAnswer(1)} />
+              <ButtonDanger title={'Incorrect'} onPress={ev => this.userAnswer(0)} />
             </View>
           </View>
         )}
@@ -91,5 +112,62 @@ class Quiz extends Component {
     )
   }
 }
+
+/**
+ * Style
+ */
+const styles = StyleSheet.create({
+  quiz: {
+    marginHorizontal: 10,
+  },
+  quizBox: {
+    backgroundColor: '#eee',
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginVertical: 10,
+    paddingVertical: 20,
+    paddingHorizontal: 20,
+  },
+  quizButtons: {
+    marginVertical: 20,
+  },
+  quizTitle: {
+    fontSize: 28,
+    fontWeight: 'bold',
+    marginVertical: 10,
+  },
+  quizLinkContainer: {
+    alignItems: 'center',
+  },
+  quizLink: {
+    color: colors.blue,
+    textDecorationLine: "underline",
+    fontSize: 16,
+    marginVertical: 10,
+  },
+  quizCount: {
+    marginVertical: 10,
+  },
+  quizResult: {
+    marginVertical: 15,
+  },
+  quizResultBox: {
+    alignItems: 'center',
+    justifyContent: 'center',
+    flexDirection: 'row',
+  },
+  quizResultHighlight: {
+    fontWeight: 'bold',
+    fontSize: 40,
+  },
+  quizResultHits: {
+    color: colors.green,
+    fontWeight: 'bold',
+  },
+  quizResultMisses: {
+    color: colors.red,
+    fontWeight: 'bold',
+  },
+});
 
 export default Quiz;

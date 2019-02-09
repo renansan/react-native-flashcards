@@ -1,11 +1,12 @@
 import React, { Component } from 'react';
-import { AsyncStorage, StyleSheet, Text, View, Button, TextInput } from 'react-native';
+import { AsyncStorage, StyleSheet, Text, View, TextInput } from 'react-native';
+import { Button } from '../components/Button';
 import { DECK_LIST } from '../utils/helpers';
 
 class AddDeck extends Component {
   state = {
     title: '',
-  } 
+  }
 
   onPress = (ev) => {
     AsyncStorage.getItem(DECK_LIST).then(data => {
@@ -42,10 +43,11 @@ class AddDeck extends Component {
 
   render() {
     return (
-      <View>
-        <Text>Type the title of the new deck</Text>
+      <View style={styles.formControl}>
+        <Text style={styles.formLabel}>Type the title of the new deck</Text>
         <TextInput
-           style={{height: 40, borderColor: 'gray', borderWidth: 1}}
+           style={styles.formInput}
+           autoFocus={true}
            onChangeText={(title) => this.setState({title})}
            value={this.state.title}
          />
@@ -54,5 +56,20 @@ class AddDeck extends Component {
     )
   }
 }
+
+/**
+ * Style
+ */
+const styles = StyleSheet.create({
+  formControl: {
+    padding: 20,
+  },
+  formLabel: {
+    fontSize: 16,
+  },
+  formInput: {
+    height: 40,
+  }
+});
 
 export default AddDeck;
