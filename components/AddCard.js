@@ -1,43 +1,59 @@
 import React, { Component } from 'react';
 import { AsyncStorage, StyleSheet, Text, View, TextInput } from 'react-native';
 import { Button } from '../components/Button';
-import { DECK_LIST } from '../utils/helpers';
+import { DECK_LIST, colors } from '../utils/helpers';
 
 class AddCard extends Component {
   state = {
     question: '',
     answer: '',
+    questionError: false,
+    answerError: false,
   }
 
   onPress = (ev) => {
-    AsyncStorage.getItem(DECK_LIST).then(data => {
-      if (data) {
-        const { question, answer } = this.state;
-        const { id } = this.props;
-        const prevData = JSON.parse(data);
-        const newData = prevData.map(item => {
-          if (item.id === id) {
-            item.cards.push({
-              question,
-              answer,
-            });
-          }
+    const { question, answer } = this.state;
+    if (question.length && answer.length) {
+      AsyncStorage.getItem(DECK_LIST).then(data => {
+        if (data) {
+          const { id } = this.props;
+          const prevData = JSON.parse(data);
+          const newData = prevData.map(item => {
+            if (item.id === id) {
+              item.cards.push({
+                question,
+                answer,
+              });
+            }
 
-          return item;
-        });
-
-        AsyncStorage.setItem(DECK_LIST, JSON.stringify(newData)).then(error => {
-          AsyncStorage.getItem(DECK_LIST).then(data => {
-            this.props.navigation.goBack();
+            return item;
           });
+
+          AsyncStorage.setItem(DECK_LIST, JSON.stringify(newData)).then(error => {
+            AsyncStorage.getItem(DECK_LIST).then(data => {
+              this.props.navigation.goBack();
+            });
+          });
+        } else {
+          // Has no data on AsyncStorage
+        }
+      });
+    } else {
+      if (!question.length) {
+        this.setState({
+          questionError: true,
         });
-      } else {
-        // Has no data on AsyncStorage
       }
-    });
+      if (!answer.length) {
+        this.setState({
+          answerError: true,
+        });
+      }
+    }
   }
 
   render() {
+    const { questionError, answerError } = this.state;
     return (
       <View>
         <View style={styles.formControl}>
@@ -48,6 +64,9 @@ class AddCard extends Component {
              onChangeText={(question) => this.setState({question})}
              value={this.state.question}
            />
+         {questionError && (
+           <Text style={styles.formError}>This field is required</Text>
+         )}
         </View>
         <View style={styles.formControl}>
           <Text style={styles.formLabel}>Type the Answer</Text>
@@ -56,6 +75,9 @@ class AddCard extends Component {
              onChangeText={(answer) => this.setState({answer})}
              value={this.state.answer}
            />
+         {answerError && (
+           <Text style={styles.formError}>This field is required</Text>
+         )}
         </View>
         <View>
           <Button title="Submit" onPress={this.onPress} />
@@ -77,6 +99,10 @@ const styles = StyleSheet.create({
   },
   formInput: {
     height: 40,
+  },
+  formError: {
+    color: colors.red,
+    fontSize: 14,
   }
 });
 
