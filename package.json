@@ -9,7 +9,9 @@
   "dependencies": {
     "eslint": "^5.12.1",
     "expo": "^32.0.4",
-    "react": "^16.7.0",
+    "expo-react-native-adapter": "^2.0.0",
+    "native-base": "^2.11.0",
+    "react": "^16.6.3",
     "react-native": "https://github.com/expo/react-native/archive/sdk-30.0.0.tar.gz",
     "react-navigation": "^3.0.9",
     "webpack": "^4.29.0"

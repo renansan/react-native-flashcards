@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import { AsyncStorage } from 'react-native';
 
+export const DECK_LIST = 'DECK_LIST';
 const NOTIFICATION_KEY = 'Flashcards:notifications'
 
 export function clearLocalNotification () {
